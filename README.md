@@ -8,7 +8,7 @@ This library provides support for the EB-SAC (CAN FD module add-on) with Spresen
 
 ## Installation
 
-~~Arduino IDEのライブラリマネージャから「EB-SAC」と検索してインストールできます。  ~~
+~~Arduino IDEのライブラリマネージャから「EB-SAC」と検索してインストールできます。~~
 または、ZIPファイルをダウンロードしてArduino IDEでインストールすることも可能です。 
 
 詳しい手順は[Arduinoライブラリのインストール方法](https://docs.arduino.cc/software/ide-v1/tutorials/installing-libraries/)を参照してください。
@@ -16,7 +16,7 @@ This library provides support for the EB-SAC (CAN FD module add-on) with Spresen
 また、本ライブラリは基本的な機能を提供します。必要に応じてZIPをダウンロードし、ローカルで編集・機能追加してご利用ください。
 
 
-~~You can install this library by searching for "EB-SAC" in the Arduino IDE Library Manager.  ~~
+~~You can install this library by searching for "EB-SAC" in the Arduino IDE Library Manager.~~
 Alternatively, you can download the ZIP file and install it via the Arduino IDE.
 
 For detailed instructions, please refer to [How to Install Arduino Libraries](https://docs.arduino.cc/software/ide-v1/tutorials/installing-libraries/).
