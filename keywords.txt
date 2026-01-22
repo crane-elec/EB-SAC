@@ -1,0 +1,40 @@
+##########################################
+# Syntax Coloring Map
+##########################################
+
+##########################################
+# Datatypes (KEYWORD1)
+##########################################
+
+EBSAC	KEYWORD1
+MCP251XFD	KEYWORD1
+
+##########################################
+# Methods and Functions (KEYWORD2)
+##########################################
+
+begin	KEYWORD2
+end	KEYWORD2
+powerOn	KEYWORD2
+powerOff	KEYWORD2
+isPower	KEYWORD2
+getCSPort	KEYWORD2
+readRegister	KEYWORD2
+writeRegister	KEYWORD2
+Reset	KEYWORD2
+
+##########################################
+# Constants (LITERAL1)
+##########################################
+
+PORT_EBSAC_PWR_D25	LITERAL1
+PORT_EBSAC_PWR_D26	LITERAL1
+PORT_EBSAC_PWR	LITERAL1
+PWR_ON_HIGH	LITERAL1
+PWR_OFF_LOW	LITERAL1
+PORT_EBSAC_CS_D19	LITERAL1
+PORT_EBSAC_CS_D24	LITERAL1
+PORT_EBSAC_CS	LITERAL1
+CS_ENABLE_LOW	LITERAL1
+CS_DISABLE_HIGH	LITERAL1
+STARTUP_DELAY_MS	LITERAL1

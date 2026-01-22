@@ -1,0 +1,14 @@
+{
+    "board": "SPRESENSE:spresense:spresense",
+    "sketch": "examples/BasicUsage/BasicUsage.ino",
+    "port": "COM9",
+    "libraries": [
+        "./src",
+        "../../src"
+    ],
+    "prebuild": "arduino-cli compile --fqbn SPRESENSE:spresense:spresense --build-path .build examples/BasicUsage/BasicUsage.ino",
+    "additionalUrls": [
+        "https://github.com/sonydevworld/spresense-arduino-compatible/releases/download/generic/package_spresense_index.json"
+    ],
+    "configuration": "Core=Main,Memory=768,Debug=Disabled,UploadSpeed=115200"
+}

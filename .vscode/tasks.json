@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Arduino: Compile sketch (sketch folder cwd)",
+            "type": "shell",
+            "command": "arduino-cli compile --fqbn SPRESENSE:spresense:spresense --build-path .build --libraries \"${workspaceFolder}\" \"${file}\"",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": []
+        }
+        ,
+        {
+            "label": "Arduino: Upload (sketch folder cwd)",
+            "type": "shell",
+            "command": "arduino-cli upload --fqbn SPRESENSE:spresense:spresense -p ${input:comPort} --input-dir ./.build",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Arduino: Build & Upload (sketch folder cwd)",
+            "type": "shell",
+            "command": "arduino-cli compile --fqbn SPRESENSE:spresense:spresense --build-path .build --libraries \"${workspaceFolder}\" \"${file}\" ; arduino-cli upload -p ${input:comPort} --fqbn SPRESENSE:spresense:spresense --input-dir ./.build",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "comPort",
+            "type": "promptString",
+            "description": "COM ポートを入力してください（例: COM9）",
+            "default": "COM9"
+        }
+    ]
+}
