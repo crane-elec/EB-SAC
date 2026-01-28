@@ -7,7 +7,8 @@
 
 EBSAC ebsac;
 MCP251XFD *canfd;
-SPISettings spi_settings(10000000, MSBFIRST, SPI_MODE0); // 10MHz
+SPISettings spi_settings_first(1000000, MSBFIRST, SPI_MODE3); // 1MHz
+SPISettings spi_settings(10000000, MSBFIRST, SPI_MODE3); // 10MHz
 
 // MCP251XFD configration data
 const uint8_t osc[]      = { 0x00, 0x00, 0x00, 0x00 }; // OSC: 40MHz, no PLL
@@ -27,14 +28,15 @@ const uint8_t c1con[]    = { 0x60, 0x07, 0x00, 0x00 }; // CiCON: STEF=0, TXQEN=0
 void setup()
 {
     // Initialize EB-SAC.
-    ebsac.begin(PORT_EBSAC_PWR_D25, PORT_EBSAC_CS_D19); 
+    ebsac.begin(PORT_EBSAC_PWR_D25, PORT_EBSAC_CS_D19); // Default CS# port
+    // ebsac.begin(PORT_EBSAC_PWR_D25, PORT_EBSAC_CS_D24); // Alternative CS# port
 
     // EB-SAC uses SPI5 on Spresense. NOT USE SPI/SPI1.
     // EB-SAC does not initialize SPI. The user must initialize SPI5, because other add-on boards may also use SPI5.
     SPI5.begin();// must be use SPI5 for Spresense EB-SAC add-on board.
 
     // Initialize MCP251XFD CAN FD controller via EB-SAC
-    canfd = new MCP251XFD( spi_settings, ebsac.getCSPort() ); // Initialize CAN FD controller
+    canfd = new MCP251XFD( spi_settings_first, ebsac.getCSPort() ); // Initialize CAN FD controller
 
     // Misc setup
     pinMode(LED0, OUTPUT);
@@ -43,6 +45,8 @@ void setup()
     pinMode(LED3, OUTPUT);
     Serial.begin(115200, SERIAL_8N1); // PC <--> Spresene
     Serial.println("EB-SAC BasicUsage.");
+    Serial.print("CS# Port: ");
+    Serial.println(ebsac.getCSPort());
     
 }
 
@@ -89,6 +93,7 @@ void loop()
             // Reset MCP251XFD
             Serial.println("Resetting MCP251XFD...");
             canfd->Reset();
+            canfd->setSPISettings( spi_settings_first ); // Set lower speed SPI after reset
             break;
         case '2':
             // Configration MCP251XFD
@@ -101,6 +106,7 @@ void loop()
             canfd->writeRegister(cREGADDR_CiFLTCON + (0*CiFILTER_OFFSET), filtcon0, 4);
             canfd->writeRegister(cREGADDR_CiFIFOCON + (2*CiFIFO_OFFSET), fifocon2, 4);
             canfd->writeRegister(cREGADDR_CiCON, c1con, 4);
+            canfd->setSPISettings( spi_settings ); // Set higher speed SPI after initialization
 
             // Read back and display
             canfd->readRegister(cREGADDR_OSC, res, 4);
@@ -198,7 +204,7 @@ void loop()
             // Read received message from RX FIFO
             canfd->readRegister(cRAMADDR_START + rxfifoua1.bF.UserAddress, res, 4);
             rxframe.id = res[1] << 8 | res[0];
-            canfd->readRegister(cRAMADDR_START + rxfifoua1.bF.UserAddress + 4, res, 2);
+            canfd->readRegister(cRAMADDR_START + rxfifoua1.bF.UserAddress + 4, res, 4);
             rxframe.dlc = res[0] & 0x0F;
             rxframe.fdf = (res[0] >> 7) & 0x01;
             rxframe.brs = (res[0] >> 6) & 0x01;

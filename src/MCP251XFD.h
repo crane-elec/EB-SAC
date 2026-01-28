@@ -41,6 +41,10 @@ public:
     {
 
     }
+    void setSPISettings(const SPISettings& spi_settings)
+    {
+        this->spi_settings = spi_settings;
+    }
     void readRegister(uint16_t address, uint8_t data)
     {
         this->readRegister(address, &data, 1);
@@ -48,15 +52,17 @@ public:
     void readRegister(uint16_t address, uint8_t* data, uint8_t length)
     {
         uint8_t len = length;
+        uint8_t frame[2 + len];  // (inst + addr)(2) + data(N)
+        frame[0] = (cINSTRUCTION_READ << 4) | ((address >> 8) & 0x3F); // Address high byte
+        frame[1] = address & 0xFF; // Address low byte
+        memcpy(data, 0, len);
+
         SPI.beginTransaction(this->spi_settings);
         digitalWrite(this->port_cs, CS_ENABLE_LOW);
-        SPI.transfer((cINSTRUCTION_READ << 4) | ((address >> 8) & 0x3F)); // Address high byte
-        SPI.transfer(address & 0xFF); // Address low byte
-        while (len--) {
-            *data++ = SPI.transfer(0x00); // Dummy byte to read data
-        }
+        SPI.transfer(frame, 2 + len); // Transfer inst+addr+dummy, receive inst+addr+data
         SPI.endTransaction();
         digitalWrite(this->port_cs, CS_DISABLE_HIGH);
+        memcpy(data, frame + 2, len);
     }
     void writeRegister(uint16_t address, uint8_t data)
     {
@@ -65,13 +71,14 @@ public:
     void writeRegister(uint16_t address, const uint8_t* data, uint8_t length)
     {
         uint8_t len = length;
+        uint8_t frame[2 + len];  // (inst + addr)(2) + data(N)
+        frame[0] = (cINSTRUCTION_WRITE << 4) | ((address >> 8) & 0x3F); // Address high byte
+        frame[1] = address & 0xFF; // Address low byte
+        memcpy(frame + 2, data, len);
+
         SPI.beginTransaction(this->spi_settings);
         digitalWrite(this->port_cs, CS_ENABLE_LOW);
-        SPI.transfer((cINSTRUCTION_WRITE << 4) | ((address >> 8) & 0x3F)); // Address high byte
-        SPI.transfer(address & 0xFF); // Address low byte
-        while (len--) {
-            SPI.transfer(*data++); // Write data byte
-        }
+        SPI.transfer(frame, 2 + len); // Transfer inst+addr+dummy, receive inst+addr+data
         SPI.endTransaction();
         digitalWrite(this->port_cs, CS_DISABLE_HIGH);
     }
@@ -79,8 +86,7 @@ public:
     {
         SPI.beginTransaction(this->spi_settings);
         digitalWrite(this->port_cs, CS_ENABLE_LOW);
-        SPI.transfer((cINSTRUCTION_RESET << 4)); // RESET instruction
-        SPI.transfer(0x00);
+        SPI.transfer16((cINSTRUCTION_RESET << 12)); // RESET instruction
         SPI.endTransaction();
         digitalWrite(this->port_cs, CS_DISABLE_HIGH);
     }
